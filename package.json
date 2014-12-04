@@ -1,0 +1,13 @@
+{
+    "name": "node-os-notify",
+    "description": "Trigger system desktop notifications from your code",
+    "private": true,
+    "version": "0.0.1",
+    "license": "MIT",
+    "main": "index.js",
+    "author": "Alexander 'yumitsu' Zinchenko <team@cyclone.pw>",
+    "maintainers": "yumitsu <team@cyclone.pw>",
+    "engines": {
+        "node": "*"
+    }
+}
