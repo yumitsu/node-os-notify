@@ -9,27 +9,23 @@ var child = require('child_process');
  * @return {[type]}
  */
 var get_notify = function(callback) {
-    var ret;
-    child.exec('which notify-send || which growlnotify || which osascript', function(e, so, se) {
+    var err;
+
+    return child.exec('which notify-send || which growlnotify || which osascript', function(e, so, se) {
         if (e !== null) {
             if (se.length === 0) {
                 se = 'no suitable notifiers found';
             }
 
-            throw new Error('os-notify:'+' '+se);
+            err = new Error('os-notify:'+' '+se);
         } else {
             so = so.trim();
 
             if (callback !== void(0)) {
-                callback(so);
-            } else {
-                ret = so;
-                process.nextTick();
+                callback(err, so);
             }
         }
     });
-
-    return ret;
 };
 
 /**
@@ -42,31 +38,40 @@ var get_notify = function(callback) {
 var notify = function(caption, body, ext_opts) {
     var _child;
 
-    if (taskName == void(0) || taskName === null || taskName.length === 0) {
-        if (this.name != void(0)) {
-            taskName = this.name;
+    if (caption == void(0) || caption === null || caption.length === 0) {
+        if (this.name != void(0) && this.async != void(0)) {
+            // Possibly Grunt
+            caption = this.name;
         } else {
-            taskName = 'os-notify';
+            caption = 'os-notify';
         }
     }
-    if (msg == void(0)) {
-        msg = 'Task'+' `'+taskName+'`'+' done.';
+
+    if (body == void(0)) {
+        body = 'Notification triggered.';
     }
 
-    msg = '\n'+msg; 
+    body = '\n'+body; 
 
-    get_notify(function(cmd) {
-
-    })
-
-    _child = child.execFile('notify-send', ['-t', '1', 'Grunt message', msg], {}, function(e) {
+    get_notify(function(e, cmd) {
         if (e) {
-            console.log(e);
+            throw e;
         }
+
+        _child = child.execFile(cmd, [caption, body], {}, function(e) {
+            if (e) {
+                console.log(e);
+            }
+        });
     });
 };
 
-// get_notify(function(c) {
-//     console.log(c);
-// });
-console.log(get_notify());
+// module.exports = function(title, body, ext_opts) {
+//     if (ext_opts == void(0)) {
+//         ext_opts = {};
+//     }
+
+//     notify(title, body, ext_opts);
+// };
+
+module.exports = notify;

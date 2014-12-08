@@ -1,7 +1,7 @@
 {
     "name": "node-os-notify",
     "description": "Trigger system desktop notifications from your code",
-    "private": true,
+    "private": false,
     "version": "0.0.1",
     "license": "MIT",
     "main": "index.js",
